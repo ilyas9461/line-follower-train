@@ -1,0 +1,50 @@
+unsigned int16 ir_sens0_hareketli_ortalama_dizi_e_off[ORNEK_SAYISI];
+unsigned int16 ir_sens1_hareketli_ortalama_dizi_e_off[ORNEK_SAYISI];
+unsigned int16 ir_sens2_hareketli_ortalama_dizi_e_off[ORNEK_SAYISI];
+unsigned int16 ir_sens3_hareketli_ortalama_dizi_e_off[ORNEK_SAYISI];
+unsigned int16 ir_sens4_hareketli_ortalama_dizi_e_off[ORNEK_SAYISI];
+unsigned int16 ir_sens5_hareketli_ortalama_dizi_e_off[ORNEK_SAYISI];
+unsigned int16 ir_sens6_hareketli_ortalama_dizi_e_off[ORNEK_SAYISI];
+unsigned int16 ir_sens7_hareketli_ortalama_dizi_e_off[ORNEK_SAYISI];
+
+unsigned int16 ir_sens0_hareketli_ortalama_dizi_e_on[ORNEK_SAYISI];
+unsigned int16 ir_sens1_hareketli_ortalama_dizi_e_on[ORNEK_SAYISI];
+unsigned int16 ir_sens2_hareketli_ortalama_dizi_e_on[ORNEK_SAYISI];
+unsigned int16 ir_sens3_hareketli_ortalama_dizi_e_on[ORNEK_SAYISI];
+unsigned int16 ir_sens4_hareketli_ortalama_dizi_e_on[ORNEK_SAYISI];
+unsigned int16 ir_sens5_hareketli_ortalama_dizi_e_on[ORNEK_SAYISI];
+unsigned int16 ir_sens6_hareketli_ortalama_dizi_e_on[ORNEK_SAYISI];
+unsigned int16 ir_sens7_hareketli_ortalama_dizi_e_on[ORNEK_SAYISI];
+
+//unsigned int16 ir_sens0_hareketli_ortalama_dizi[ORNEK_SAYISI];
+//unsigned int16 ir_sens1_hareketli_ortalama_dizi[ORNEK_SAYISI];
+//unsigned int16 ir_sens2_hareketli_ortalama_dizi[ORNEK_SAYISI];
+//unsigned int16 ir_sens3_hareketli_ortalama_dizi[ORNEK_SAYISI];
+//unsigned int16 ir_sens4_hareketli_ortalama_dizi[ORNEK_SAYISI];
+//unsigned int16 ir_sens5_hareketli_ortalama_dizi[ORNEK_SAYISI];
+//unsigned int16 ir_sens6_hareketli_ortalama_dizi[ORNEK_SAYISI];
+//unsigned int16 ir_sens7_hareketli_ortalama_dizi[ORNEK_SAYISI];
+
+
+
+//  if(e_on==1){
+//       
+//        ir_sens_ort_deger_e_on[0]=hareketli_ortalama(hareketli_ort_orn_say, ir_sens_adc_ham_deger[0], ir_sens0_hareketli_ortalama_dizi);
+//        ir_sens_ort_deger_e_on[1]=hareketli_ortalama(hareketli_ort_orn_say, ir_sens_adc_ham_deger[1], ir_sens1_hareketli_ortalama_dizi);
+//        ir_sens_ort_deger_e_on[2]=hareketli_ortalama(hareketli_ort_orn_say, ir_sens_adc_ham_deger[2], ir_sens2_hareketli_ortalama_dizi);
+//        ir_sens_ort_deger_e_on[3]=hareketli_ortalama(hareketli_ort_orn_say, ir_sens_adc_ham_deger[3], ir_sens3_hareketli_ortalama_dizi);
+//        ir_sens_ort_deger_e_on[4]=hareketli_ortalama(hareketli_ort_orn_say, ir_sens_adc_ham_deger[4], ir_sens4_hareketli_ortalama_dizi);
+//        ir_sens_ort_deger_e_on[5]=hareketli_ortalama(hareketli_ort_orn_say, ir_sens_adc_ham_deger[5], ir_sens5_hareketli_ortalama_dizi);
+//        ir_sens_ort_deger_e_on[6]=hareketli_ortalama(hareketli_ort_orn_say, ir_sens_adc_ham_deger[6], ir_sens6_hareketli_ortalama_dizi);
+//        ir_sens_ort_deger_e_on[7]=hareketli_ortalama(hareketli_ort_orn_say, ir_sens_adc_ham_deger[7], ir_sens7_hareketli_ortalama_dizi);
+//   }
+//   if(e_on==0){
+//        ir_sens_ort_deger_e_off[0]=hareketli_ortalama(hareketli_ort_orn_say, ir_sens_adc_ham_deger[0], ir_sens0_hareketli_ortalama_dizi_e_off);
+//        ir_sens_ort_deger_e_off[1]=hareketli_ortalama(hareketli_ort_orn_say, ir_sens_adc_ham_deger[1], ir_sens1_hareketli_ortalama_dizi_e_off);
+//        ir_sens_ort_deger_e_off[2]=hareketli_ortalama(hareketli_ort_orn_say, ir_sens_adc_ham_deger[2], ir_sens2_hareketli_ortalama_dizi_e_off);
+//        ir_sens_ort_deger_e_off[3]=hareketli_ortalama(hareketli_ort_orn_say, ir_sens_adc_ham_deger[3], ir_sens3_hareketli_ortalama_dizi_e_off);
+//        ir_sens_ort_deger_e_off[4]=hareketli_ortalama(hareketli_ort_orn_say, ir_sens_adc_ham_deger[4], ir_sens4_hareketli_ortalama_dizi_e_off);
+//        ir_sens_ort_deger_e_off[5]=hareketli_ortalama(hareketli_ort_orn_say, ir_sens_adc_ham_deger[5], ir_sens5_hareketli_ortalama_dizi_e_off);
+//        ir_sens_ort_deger_e_off[6]=hareketli_ortalama(hareketli_ort_orn_say, ir_sens_adc_ham_deger[6], ir_sens6_hareketli_ortalama_dizi_e_off);
+//        ir_sens_ort_deger_e_off[7]=hareketli_ortalama(hareketli_ort_orn_say, ir_sens_adc_ham_deger[7], ir_sens7_hareketli_ortalama_dizi_e_off);
+//   }

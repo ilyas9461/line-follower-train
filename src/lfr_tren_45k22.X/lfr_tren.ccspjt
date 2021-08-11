@@ -1,0 +1,64 @@
+[PROJECT]
+Target=build\default\production\lfr_tren.hex
+Processor_Text=PIC18F45K22
+CCSVersion=5.076
+Compiler=PCH
+[Target Data]
+FileList=lfr_tren.c
+[build\default\production\lfr_tren.c]
+Type=4
+[mru-list]
+1=build\default\production\lfr_tren.c
+
+[fileformats]
+forcecoff=0
+
+[ProjectLog]
+Days=4
+D1=28-08-2019
+D1_L=12
+D1_L1=[49604]Project Opened.
+D1_L2=[49683]Started Editing.
+D1_L3=[50850]Stopped Editing.
+TotalEdit=37
+TotalDebug=0
+D1_E=37
+D1_D=0
+D1_L4=[50850]Project Closed.
+D1_L5=[52467]Project Opened.
+D1_L6=[52521]Started Editing.
+D1_L7=[52863]Stopped Editing.
+D1_L8=[52874]Started Editing.
+D1_L9=[53811]Stopped Editing.
+D1_L10=[53869]Started Editing.
+D1_L11=[54489]Stopped Editing.
+D1_L12=[54892]Project Closed.
+D2=12-11-2019
+D2_L=2
+D2_L1=[62417]Project Opened.
+D2_L2=[62433]Project Closed.
+D3=29-11-2019
+D3_L=2
+D3_L1=[32386]Project Opened.
+D3_L2=[32474]Project Closed.
+D4=21-01-2020
+D4_L=2
+D4_L1=[63357]Project Opened.
+D4_L2=[63366]Project Closed.
+
+[Opened Files]
+1=lfr_tren.c
+t1=373
+2=lfr_tren.h
+t2=9
+Count=3
+3=k_means_fonk.c
+t3=168
+[lfr_tren.c]
+Type=4
+
+[defines]
+buildcount=18
+[Units]
+Count=1
+1=lfr_tren (main)

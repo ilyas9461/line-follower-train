@@ -1,0 +1,272 @@
+//
+#include "tanimlamalar.h"
+
+unsigned int16 k_means_veri_havuzu[SENS_SAYISI*10];
+unsigned int16 max_esik_veri_havuzu[SENS_SAYISI*10];
+unsigned int16 min_esik_veri_havuzu[SENS_SAYISI*10];
+unsigned int16 max_esik_ort_deger=0;
+unsigned int16 min_esik_ort_deger=0;
+unsigned int16 k_means_esik_ort_deger=0, baslangic_esik_ort_deger=0;
+BYTE k_means_veri_say=0,k_means_veri_havuzu_index=0;
+BOOLEAN k_means_yeni_veri=0;
+BOOLEAN baslangic_esik_gec=FALSE;
+
+float s_pos=-1.0;
+
+
+void k_means_veri_havuzu_olustur(){
+    int i=0;
+    
+    k_means_veri_say++;
+    
+    if(k_means_veri_say<=10 && !k_means_yeni_veri){
+        
+        for (i = 0; i < SENS_SAYISI; i++) {
+            
+            if(ir_sens_ort_deger_e_on[i]==ir_sens_ort_deger_e_off[i]) //Aþýrý ýþýk, Von=Voff
+            {
+                ir_sens_ort_deger[i]=ir_sens_ort_deger_e_on[i];
+                k_means_veri_havuzu[k_means_veri_havuzu_index++]=ir_sens_ort_deger_e_on[i];
+                
+            }else if(ir_sens_ort_deger_e_on[i]>ir_sens_ort_deger_e_off[i]+100)  //normal ýþýk, Von>voff
+            {
+                ir_sens_ort_deger[i]=ir_sens_ort_deger_e_on[i]-ir_sens_ort_deger_e_off[i];
+                k_means_veri_havuzu[k_means_veri_havuzu_index++]=ir_sens_ort_deger[i];
+            }
+
+            if(k_means_veri_havuzu_index>=(SENS_SAYISI*10)) break;
+        }
+    }
+    
+    if(k_means_veri_say>=10 || (k_means_veri_havuzu_index>=(SENS_SAYISI*10)))
+    {
+        k_means_veri_havuzu_index=k_means_veri_say=0;
+        k_means_yeni_veri=TRUE;
+    }
+        
+   
+}
+
+void k_means_baslangic_esik(unsigned int16 *veri)
+{
+    int x=0;
+    
+    unsigned int16 _max_deger=0;
+    unsigned int16 _min_deger=1023;
+    
+    if(k_means_yeni_veri){
+        
+        k_means_yeni_veri=FALSE;
+        
+        for(x=0;x<SENS_SAYISI*10;x++){
+            
+            if(veri[x]>_max_deger) _max_deger=veri[x];
+            if(veri[x]<_min_deger) _min_deger=veri[x];
+        }
+        
+         baslangic_esik_ort_deger=(unsigned int16)((_max_deger+_min_deger)/2);
+         if(baslangic_esik_ort_deger<100) baslangic_esik_ort_deger=400;
+    }
+    
+   
+}
+
+void k_means_baslangic_esik_olustur(){
+    bip_rf_var();
+    unsigned int32 time_kal_yap=0;
+    
+    while(1){
+        
+        k_means_baslangic_esik(k_means_veri_havuzu);
+        
+        if(millis()-time_kal_yap>5000){
+            break;
+        }
+        
+    }
+//    fprintf(usbSerial,"K Means Bas Esik:%lu \r\n",baslangic_esik_ort_deger);
+    //bip_yazildi();
+    
+}
+
+
+
+int k_means_max_min_esik()
+{
+    int x=0, _max_index=0, _min_index=0, yineleme=0;
+    unsigned int32 _maxtop=0,_mintop=0;
+    unsigned int16 son_deger=0;
+   
+    max_esik_ort_deger=0;
+    min_esik_ort_deger=1023;
+    
+    memset(max_esik_veri_havuzu,0,SENS_SAYISI*10);
+    memset(min_esik_veri_havuzu,0,SENS_SAYISI*10);
+    
+    do{
+        max_esik_ort_deger=0;
+        min_esik_ort_deger=0;
+        
+        for(x=0;x<SENS_SAYISI*10;x++){
+            
+            if(!baslangic_esik_gec){
+                if(k_means_veri_havuzu[x]> baslangic_esik_ort_deger)
+                {
+                    max_esik_veri_havuzu[_max_index++]=k_means_veri_havuzu[x];
+                }
+            }
+            if(baslangic_esik_gec){
+                if(k_means_veri_havuzu[x]>k_means_esik_ort_deger)
+                {
+                    max_esik_veri_havuzu[_max_index++]=k_means_veri_havuzu[x];
+
+                }
+            }
+           
+            if(!baslangic_esik_gec){
+                if(k_means_veri_havuzu[x]<baslangic_esik_ort_deger){
+                    min_esik_veri_havuzu[_min_index++]=k_means_veri_havuzu[x];    
+                }
+            }
+            if(baslangic_esik_gec){
+                if(k_means_veri_havuzu[x]< k_means_esik_ort_deger)
+                {
+                    min_esik_veri_havuzu[_min_index++]=k_means_veri_havuzu[x];  
+                }
+            }
+            
+          // fprintf(usbSerial,"%lu,",k_means_veri_havuzu[x]);
+          //  fprintf(usbSerial,"%lu,",max_esik_veri_havuzu[_max_index]);
+           // fprintf(usbSerial,"%lu,",k_means_veri_havuzu[x]);
+      
+        }
+        
+       // fprintf(usbSerial,"\r\n");
+        
+        baslangic_esik_gec=TRUE;
+        
+        for(x=0;x<_max_index;x++) _maxtop+=max_esik_veri_havuzu[x];
+        for(x=0;x<_min_index;x++) _mintop+=min_esik_veri_havuzu[x];
+        
+        max_esik_ort_deger=(unsigned int16)(_maxtop/_max_index);
+        min_esik_ort_deger=(unsigned int16)(_mintop/_min_index);
+        k_means_esik_ort_deger=(unsigned int16)((max_esik_ort_deger+min_esik_ort_deger)/2);
+        
+       // fprintf(usbSerial,"indexMm:%Lu,%Lu \t %u,%u\r\n",_maxtop,_mintop,_max_index,_min_index);
+        
+        _max_index=_min_index=0;
+        _maxtop=_mintop=0;
+        
+       // memset(max_esik_veri_havuzu,0,SENS_SAYISI*10);
+       // memset(min_esik_veri_havuzu,0,SENS_SAYISI*10);
+        
+        yineleme++;
+        
+//        fprintf(usbSerial,"K Means: max:%lu\tmin:%lu\tesik=%lu\tyineleme=%u\r\n",
+//                                    max_esik_ort_deger,min_esik_ort_deger,k_means_esik_ort_deger,yineleme);
+        
+        if( k_means_esik_ort_deger==son_deger){
+            k_means_yeni_veri=FALSE;
+             break;
+        }
+
+        son_deger= k_means_esik_ort_deger;
+        
+       
+        
+    }while(k_means_yeni_veri);
+
+    
+    while(1){
+        
+        for(x=0;x<SENS_SAYISI;x++){
+            fprintf(usbSerial,"%lu,",ir_sens_ort_deger[x]);
+        }
+
+        fprintf(usbSerial,"%lu,%lu,\r",max_esik_ort_deger,min_esik_ort_deger);
+
+       // s_pos=get_float();
+        if(kbhit(usbSerial)){
+            bip_rf_var();
+            char c=fgetc(usbSerial);
+          // s_pos=get_float();
+           // fprintf(usbSerial,"mcu:%c\r\n", c);
+            if(c==13) break;
+          
+            //break;
+        }
+//        if(s_pos>-1.0){
+//            bip_rf_var();
+//            break;
+//        }
+        
+        delay_ms(10);  //40
+    }
+    
+    s_pos=-1.0;
+    
+    return yineleme;
+    
+}
+
+void k_means_sens_sayisal(){
+     int x=0;
+     
+     for(x=0;x<SENS_SAYISI;x++) {
+         
+         if( ir_sens_ort_deger[x]<k_means_esik_ort_deger){
+              ir_sens_sayisal_deger[x]=SIYAH;  
+         }
+          if( ir_sens_ort_deger[x]>k_means_esik_ort_deger){
+              ir_sens_sayisal_deger[x]=BEYAZ;  
+         }
+         
+//         if( ir_sens_ort_deger[x]<=min_esik_ort_deger){
+//              ir_sens_sayisal_deger[x]=SIYAH;  
+//         }
+//          if( ir_sens_ort_deger[x]>=max_esik_ort_deger){
+//              ir_sens_sayisal_deger[x]=BEYAZ;  
+//         }
+     }
+}
+
+unsigned int8 k_means_sayisal_pos_olustur(){
+    
+//    unsigned int8 pos=0,x=0,y=0,pos_say=1;
+//    do{
+//        for(y=0;y<8;y++){
+//            if(ir_sens_sayisal_deger[y]==SIYAH)
+//            {
+//                for(x=0;x<8;x++)
+//                    if(x!=y){
+//                    if(ir_sens_sayisal_deger[x]==BEYAZ)
+//                        pos=pos_say;
+//                    else{
+//                        pos_say++;
+//                    }
+//                }
+//            }else pos_say++;
+//            
+//            if(pos_say>=15) break;
+//            
+//            if(ir_sens_sayisal_deger[y]==SIYAH && ir_sens_sayisal_deger[y+1]==SIYAH )
+//            {
+//                for(x=0;x<8;x++)
+//                    if(x!=y && x!=y+1){
+//                        if(ir_sens_sayisal_deger[x]==BEYAZ)
+//                            pos=pos_say;
+//                        else{
+//                            pos_say++;
+//                        }
+//                    }
+//            }else pos_say++;
+//            
+//        }
+//                
+//        
+//    }while(pos_say<16);
+//    
+//    fprintf(usbSerial,"K_Means POS=%u \r\n",pos);
+//    return pos;
+    
+}

@@ -1,0 +1,338 @@
+ÀÄlfr_tren_45k22
+   ÃÄMAIN  0/2124  Ram=4
+   ³  ÃÄ@cinit1  (Inline)  Ram=0
+   ³  ÃÄbipp  0/190  Ram=9
+   ³  ³  ÃÄ@WRITEBITA  0/66  Ram=6
+   ³  ³  ÃÄ@WRITEBITA  0/66  Ram=6
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄ@WRITEBITA  0/66  Ram=6
+   ³  ³  ÃÄ@WRITEBITA  0/66  Ram=6
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÀÄ@delay_ms1  0/42  Ram=1
+   ³  ÃÄmillis_kurulum  0/20  Ram=0
+   ³  ÃÄdelay_m_us  0/38  Ram=2
+   ³  ³  ÀÄ@delay_ms1  0/42  Ram=1
+   ³  ÃÄmp3_set_volume  0/18  Ram=1
+   ³  ³  ÀÄsendCommand  0/166  Ram=20
+   ³  ³     ÃÄ@PUTCHARI_BIU_2  0/10  Ram=0
+   ³  ³     ÀÄ@delay_ms1  0/42  Ram=1
+   ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ÃÄ@MEMSET  0/26  Ram=0
+   ³  ÃÄk_means_baslangic_esik_olustur  0/138  Ram=8
+   ³  ³  ÃÄbipp  0/190  Ram=9
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄk_means_baslangic_esik  0/284  Ram=9
+   ³  ³  ÀÄbipp  0/190  Ram=9
+   ³  ³     ÀÄ*
+   ³  ÃÄsrand  0/20  Ram=4
+   ³  ÃÄhc595_spi_yaz  0/86  Ram=5
+   ³  ÃÄrf_islemler  0/2558  Ram=2
+   ³  ³  ÃÄbipp  0/190  Ram=9
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄmp3_stop  0/16  Ram=0
+   ³  ³  ³  ÀÄsendCommand  0/166  Ram=20
+   ³  ³  ³     ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄbipp  0/190  Ram=9
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄmp3_stop  0/16  Ram=0
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄk_means_baslangic_esik_olustur  0/138  Ram=8
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄmp3_set_volume  0/18  Ram=1
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄmp3_play  0/28  Ram=4
+   ³  ³  ³  ÀÄsendCommand  0/166  Ram=20
+   ³  ³  ³     ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄmp3_stop  0/16  Ram=0
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄmp3_play  0/28  Ram=4
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄbipp  0/190  Ram=9
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄmp3_stop  0/16  Ram=0
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄmp3_rastgele  0/316  Ram=8
+   ³  ³  ³  ÃÄmp3_stop  0/16  Ram=0
+   ³  ³  ³  ³  ÀÄ*
+   ³  ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ³  ÃÄmp3_set_volume  0/18  Ram=1
+   ³  ³  ³  ³  ÀÄ*
+   ³  ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ³  ÃÄ@MEMSET  0/26  Ram=0
+   ³  ³  ³  ÃÄmp3_list_kontrol  0/52  Ram=1
+   ³  ³  ³  ÃÄrand  0/114  Ram=4
+   ³  ³  ³  ³  ÃÄ@MUL3232  0/104  Ram=14
+   ³  ³  ³  ³  ÀÄ@DIV1616  0/70  Ram=5
+   ³  ³  ³  ÃÄ@DIV1616  0/70  Ram=5
+   ³  ³  ³  ÃÄmp3_set_volume  0/18  Ram=1
+   ³  ³  ³  ³  ÀÄ*
+   ³  ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ³  ÃÄmp3_play  0/28  Ram=4
+   ³  ³  ³  ³  ÀÄ*
+   ³  ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ³  ÃÄmp3_stop  0/16  Ram=0
+   ³  ³  ³  ³  ÀÄ*
+   ³  ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ³  ÃÄmp3_play  0/28  Ram=4
+   ³  ³  ³  ³  ÀÄ*
+   ³  ³  ³  ÀÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄmp3_set_volume  0/18  Ram=1
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄbipp  0/190  Ram=9
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄbipp  0/190  Ram=9
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄbipp  0/190  Ram=9
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄmp3_stop  0/16  Ram=0
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄbipp  0/190  Ram=9
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄbipp  0/190  Ram=9
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@DIVS1616  0/120  Ram=6
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄmp3_stop  0/16  Ram=0
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄbipp  0/190  Ram=9
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄbipp  0/190  Ram=9
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@DIVS1616  0/120  Ram=6
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄbipp  0/190  Ram=9
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄmp3_stop  0/16  Ram=0
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄmp3_stop  0/16  Ram=0
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄmp3_set_volume  0/18  Ram=1
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄmp3_play  0/28  Ram=4
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄmp3_stop  0/16  Ram=0
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄmp3_set_volume  0/18  Ram=1
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄmp3_play  0/28  Ram=4
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄmp3_stop  0/16  Ram=0
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄbipp  0/190  Ram=9
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄmp3_stop  0/16  Ram=0
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄmp3_set_volume  0/18  Ram=1
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄmp3_stop  0/16  Ram=0
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄmp3_play  0/28  Ram=4
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄbipp  0/190  Ram=9
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄJtnSureAyarSeslendir  0/50  Ram=2
+   ³  ³  ³  ÃÄmp3_stop  0/16  Ram=0
+   ³  ³  ³  ³  ÀÄ*
+   ³  ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ³  ÃÄmp3_play  0/28  Ram=4
+   ³  ³  ³  ³  ÀÄ*
+   ³  ³  ³  ÀÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄbipp  0/190  Ram=9
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄJtnSureAyarSeslendir  0/50  Ram=2
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄbipp  0/190  Ram=9
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄmp3_stop  0/16  Ram=0
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄmp3_stop  0/16  Ram=0
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄmp3_play  0/28  Ram=4
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÀÄbipp  0/190  Ram=9
+   ³  ³     ÀÄ*
+   ³  ÃÄmp3_rastgele  0/316  Ram=8
+   ³  ³  ÀÄ*
+   ³  ÃÄk_means_max_min_esik  0/876  Ram=18
+   ³  ³  ÃÄ@MEMSET  0/26  Ram=0
+   ³  ³  ÃÄ@MEMSET  0/26  Ram=0
+   ³  ³  ÃÄ@DIV3232  0/152  Ram=16
+   ³  ³  ÀÄ@DIV3232  0/152  Ram=16
+   ³  ÃÄsens_cizgi_durum_getir  0/1136  Ram=5
+   ³  ³  ÃÄ@PSTRINGCN_9600_31774_31775  0/42  Ram=3
+   ³  ³  ÃÄ@PRINTF_U_9600_31774_31775  0/126  Ram=2
+   ³  ³  ³  ÃÄ@DIV88  0/44  Ram=3
+   ³  ³  ³  ÀÄ@DIV88  0/44  Ram=3
+   ³  ³  ÃÄ@PSTRINGCN_9600_31774_31775  0/42  Ram=3
+   ³  ³  ÀÄ@PRINTF_U_9600_31774_31775  0/126  Ram=2
+   ³  ³     ÀÄ*
+   ³  ÃÄsens_led_goster  0/238  Ram=5
+   ³  ³  ÀÄhc595_spi_yaz  0/86  Ram=5
+   ³  ÃÄk_means_max_min_esik  0/876  Ram=18
+   ³  ³  ÀÄ*
+   ³  ÃÄsens_cizgi_durum_getir  0/1136  Ram=5
+   ³  ³  ÀÄ*
+   ³  ÃÄsens_led_goster  0/238  Ram=5
+   ³  ³  ÀÄ*
+   ³  ÃÄagirlikliPosGetir  0/274  Ram=12
+   ³  ³  ÃÄ@MUL321616  0/64  Ram=4
+   ³  ³  ÃÄ@MUL321616  0/64  Ram=4
+   ³  ³  ÃÄ@MUL1616  0/36  Ram=5
+   ³  ³  ÀÄ@DIV3232  0/152  Ram=16
+   ³  ÃÄ@ITOF  0/54  Ram=2
+   ³  ÃÄ@DIVFF  0/350  Ram=14
+   ³  ÃÄ@DIVFF  0/350  Ram=14
+   ³  ÃÄpdKontrol  0/428  Ram=22
+   ³  ³  ÃÄ@SITOF  0/80  Ram=2
+   ³  ³  ÃÄ@MULFF  0/246  Ram=11
+   ³  ³  ÃÄ@SFTOI  0/60  Ram=4
+   ³  ³  ÃÄ@MULS1616  0/86  Ram=6
+   ³  ³  ÃÄ@DIVS1616  0/120  Ram=6
+   ³  ³  ÃÄ@SITOF  0/80  Ram=2
+   ³  ³  ÃÄ@MULFF  0/246  Ram=11
+   ³  ³  ÃÄ@MULFF  0/246  Ram=11
+   ³  ³  ÃÄ@ITOF  0/54  Ram=2
+   ³  ³  ÃÄ@DIVFF  0/350  Ram=14
+   ³  ³  ÀÄ@SFTOI  0/60  Ram=4
+   ³  ÃÄ@PSTRINGCN_9600_31774_31775  0/42  Ram=3
+   ³  ÃÄ@PRINTF_LU_9600_31774_31775  0/182  Ram=9
+   ³  ÃÄ@PSTRINGCN_9600_31774_31775  0/42  Ram=3
+   ³  ÃÄ@PRINTF_LD_9600_31774_31775  0/238  Ram=9
+   ³  ÃÄsureBul  0/1230  Ram=5
+   ³  ³  ÃÄsureSon  0/268  Ram=4
+   ³  ³  ³  ÃÄmp3_stop  0/16  Ram=0
+   ³  ³  ³  ³  ÀÄ*
+   ³  ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ³  ÃÄmp3_play  0/28  Ram=4
+   ³  ³  ³  ³  ÀÄ*
+   ³  ³  ³  ÃÄmp3_stop  0/16  Ram=0
+   ³  ³  ³  ³  ÀÄ*
+   ³  ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ³  ÃÄmp3_play  0/28  Ram=4
+   ³  ³  ³  ³  ÀÄ*
+   ³  ³  ³  ÃÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ³  ÃÄmp3_set_volume  0/18  Ram=1
+   ³  ³  ³  ³  ÀÄ*
+   ³  ³  ³  ÀÄ@delay_ms1  0/42  Ram=1
+   ³  ³  ÃÄsureSon  0/268  Ram=4
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄsureSon  0/268  Ram=4
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄsureSon  0/268  Ram=4
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄsureSon  0/268  Ram=4
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄsureSon  0/268  Ram=4
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄsureSon  0/268  Ram=4
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄsureSon  0/268  Ram=4
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄsureSon  0/268  Ram=4
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄsureSon  0/268  Ram=4
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄsureSon  0/268  Ram=4
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄsureSon  0/268  Ram=4
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄsureSon  0/268  Ram=4
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄsureSon  0/268  Ram=4
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄsureSon  0/268  Ram=4
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÃÄsureSon  0/268  Ram=4
+   ³  ³  ³  ÀÄ*
+   ³  ³  ÀÄsureSon  0/268  Ram=4
+   ³  ³     ÀÄ*
+   ³  ÃÄmp3_play  0/28  Ram=4
+   ³  ³  ÀÄ*
+   ³  ÃÄv_aku_oku  0/230  Ram=5
+   ³  ³  ÃÄ@delay_us1  0/36  Ram=1
+   ³  ³  ÃÄ@delay_us1  0/36  Ram=1
+   ³  ³  ÃÄ@DIV1616  0/70  Ram=5
+   ³  ³  ÃÄ@ITOF  0/54  Ram=2
+   ³  ³  ÃÄ@MULFF  0/246  Ram=11
+   ³  ³  ÀÄ@MULFF  0/246  Ram=11
+   ³  ÀÄaku_sarj_seslendir  0/880  Ram=6
+   ³     ÃÄ@FLT  0/122  Ram=10
+   ³     ÃÄ@FLT  0/122  Ram=10
+   ³     ÃÄ@FLT  0/122  Ram=10
+   ³     ÃÄbipp  0/190  Ram=9
+   ³     ³  ÀÄ*
+   ³     ÃÄ@delay_ms1  0/42  Ram=1
+   ³     ÃÄmp3_stop  0/16  Ram=0
+   ³     ³  ÀÄ*
+   ³     ÃÄ@delay_ms1  0/42  Ram=1
+   ³     ÃÄmp3_play  0/28  Ram=4
+   ³     ³  ÀÄ*
+   ³     ÃÄ@delay_ms1  0/42  Ram=1
+   ³     ÃÄ@FLT  0/122  Ram=10
+   ³     ÃÄ@FLT  0/122  Ram=10
+   ³     ÃÄbipp  0/190  Ram=9
+   ³     ³  ÀÄ*
+   ³     ÃÄ@delay_ms1  0/42  Ram=1
+   ³     ÃÄmp3_stop  0/16  Ram=0
+   ³     ³  ÀÄ*
+   ³     ÃÄ@delay_ms1  0/42  Ram=1
+   ³     ÃÄmp3_play  0/28  Ram=4
+   ³     ³  ÀÄ*
+   ³     ÃÄ@delay_ms1  0/42  Ram=1
+   ³     ÃÄ@FLT  0/122  Ram=10
+   ³     ÃÄ@FLT  0/122  Ram=10
+   ³     ÃÄbipp  0/190  Ram=9
+   ³     ³  ÀÄ*
+   ³     ÃÄ@delay_ms1  0/42  Ram=1
+   ³     ÃÄmp3_stop  0/16  Ram=0
+   ³     ³  ÀÄ*
+   ³     ÃÄ@delay_ms1  0/42  Ram=1
+   ³     ÃÄmp3_play  0/28  Ram=4
+   ³     ³  ÀÄ*
+   ³     ÃÄ@delay_ms1  0/42  Ram=1
+   ³     ÃÄ@FLT  0/122  Ram=10
+   ³     ÃÄbipp  0/190  Ram=9
+   ³     ³  ÀÄ*
+   ³     ÃÄ@delay_ms1  0/42  Ram=1
+   ³     ÃÄmp3_stop  0/16  Ram=0
+   ³     ³  ÀÄ*
+   ³     ÃÄ@delay_ms1  0/42  Ram=1
+   ³     ÃÄmp3_play  0/28  Ram=4
+   ³     ³  ÀÄ*
+   ³     ÀÄ@delay_ms1  0/42  Ram=1
+   ÀÄTimer0_int  0/90  Ram=0
+      ÃÄir_sens_adc_oku  0/230  Ram=6
+      ÃÄir_sens_adc_oku  0/230  Ram=6
+      ÀÄk_means_veri_havuzu_olustur  0/634  Ram=5

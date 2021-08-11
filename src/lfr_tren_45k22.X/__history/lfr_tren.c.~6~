@@ -1,0 +1,871 @@
+/* 
+ * File:   lfr_tren.c
+ * Author: ilyas
+ *
+ * Created on 31 Temmuz 2019 Çarþamba, 08:50
+ */
+
+#include "lfr_tren.h"
+#include "tanimlamalar.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h >
+
+//#include <math.h>
+
+#define STREAM_SERIAL_INPUT usbSerial
+#include "_input.c"
+
+#define RAND_MAX 9   //rand() fonksiyonu için gerekli  RAND_MAX=MP3_SD_RASTGELE_MAX_SAYI olmalý
+#include <stdlib.h>
+
+#define GRAPH_X_MAX  "255"
+#define GRAPH_Y_MAX  "100"
+#define GRAPH_TITLE   "V_aku"
+#define GRAPH_Y_DECIMAL_POINTS  "0"
+
+#include <graph_siow.h>
+#include "timer.h"
+#include "hc595_spi.c"
+#include "dfPlayer.c"
+#include "dfPlayer.h"
+#include "pid_hesapla.c"
+
+unsigned int32 time_led=0;      //long long int32
+//unsigned int32 time_aku_ornek=0;      //long long int32
+unsigned int32 time_sens_deger_goster=0;
+
+unsigned int8 lfr_led=0;        // sensorlerin çizgi pozisyonlarýný tutar digital olarak.
+unsigned int16 pwm_sol=0,pwm_sag=0,ir_sens_pos_digital=0;//,ir_sens_pos_ort=0;
+int8 led_say=0;
+float v_aku=0.0;
+
+//unsigned int16 aku_hareketli_ortalama_dizi[ORNEK_SAYISI];
+
+int hareketli_ort_orn_say=0;
+
+
+unsigned int16 ir_sens_adc_ham_deger[SENS_SAYISI];
+unsigned int16 ir_sens_ort_deger[SENS_SAYISI];      //kalibre edlmiþ ortalama deðer, ortam ýþýðýnýn etkisinden arýndýrýþný deðer.
+unsigned int16 ir_sens_ort_deger_e_on[SENS_SAYISI];
+unsigned int16 ir_sens_ort_deger_e_off[SENS_SAYISI];
+
+//unsigned int16 ir_sens_ort_max_deger[SENS_SAYISI];
+//unsigned int16 ir_sens_ort_min_deger[SENS_SAYISI];
+
+//unsigned int16 ir_sens_esik_deger[SENS_SAYISI];
+//unsigned int16 ir_sens_baslangic_esik_deger[SENS_SAYISI];
+
+//char ir_sens_isik_durumu[SENS_SAYISI]={0,0,0,0,0,0,0,0};
+//unsigned int16 ir_sens_asiri_isik_deger[SENS_SAYISI]={0,0,0,0,0,0,0,0};
+unsigned int8 ir_sens_sayisal_deger[SENS_SAYISI]={0,0,0,0,0,0,0,0};
+
+BOOLEAN sens_yeni_deger=0;
+int sens_emiter_on_off=0;
+
+//int hepsi_beyaz_say=0; //siyah=1, beyaz=0
+//int hepsi_siyah_say=0; //siyah=1, beyaz=0
+
+signed int16 hata=0,son_hata=0;
+
+BOOLEAN sens_hepsi_beyaz=0;
+BOOLEAN sens_hepsi_siyah=0;
+
+BOOLEAN rx_pos=1;
+//char son_isik_durumu=0;
+
+//int _sens=0;
+
+
+void serialPort1_int();
+unsigned int16 agirlikliPosGetir(int8 ortDigital);
+void ir_sens_adc_oku(BOOLEAN e_on);
+void millis_kurulum();
+void sens_max_min_bul(BOOLEAN anlik, BOOLEAN baslangic);
+void sens_led_goster();
+void sens_deger_sayisal();
+void kalibrasyon();
+void Timer0_int();
+void sens_cizgi_durum_getir();
+unsigned int16 hareketli_ortalama(int ornek_say, unsigned int16 an_deger, unsigned int16 *moving_dizi);
+void bipp(unsigned int16 sure,int sayi,long pin) ;
+void delay_m_us(unsigned int16 n);
+float v_aku_oku_ort();
+float v_aku_oku();
+void debug_ir_sens_dizi(unsigned int16 *ir_dizi);
+//void debug_ir_sens(int deger_tip,BOOLEAN volt);
+void test_donanim();
+void dizi_set(unsigned int16 *dizi,unsigned int16 deger, int16 uzunluk);
+
+#include "k_means_fonk.c"
+
+//#include "fuzzy_ardu_pos.c"
+
+void main() 
+{
+   // setup_oscillator(OSC_32MHZ);
+    setup_oscillator(OSC_64MHZ);
+   
+    setup_dac(DAC_OFF); 
+    setup_comparator(NC_NC_NC_NC); 
+    setup_vref(FALSE); 
+    //setup_adc(ADC_OFF);
+    
+    setup_ccp1(CCP_PWM);                   // Configure CCP1 as standard PWM
+    setup_ccp2(CCP_PWM);                   // Configure CCP2 as standard PWM
+    setup_ccp3(CCP_OFF); 
+    setup_ccp4(CCP_OFF); 
+    setup_ccp5(CCP_OFF); 
+    
+    setup_timer_1(T1_DISABLED); 
+    //setup_timer_2(T2_DIV_BY_16, 250, 1);   // 40MHz fosc ile 2.5KHz yaklaþýk(div_16)
+    setup_timer_4(T4_DISABLED,0,1); 
+    setup_timer_5(T5_DISABLED);
+    setup_timer_6(T6_DISABLED,0,1); 
+ 
+   // setup_adc(ADC_CLOCK_DIV_16); 
+    setup_adc(ADC_CLOCK_INTERNAL);          //  9 bit (max 511) okuyan adc bu þekilde 10 bit oldu.....
+    setup_adc_ports(sAN0|sAN1|sAN2|sAN3|sAN4|sAN5|sAN6|sAN7|sAN8,VSS_VDD );
+    /* PWM Hakkýnda :
+        setup_timer_2(T2_DIV_BY_16, 124, 1); komut satýrý ile 10 bit PWM
+     *  2500Hz için ayarlanmýþ oldu 
+     */
+    //setup_timer_2(T2_DIV_BY_16, 124, 1);   // Set PWM frequency to 2500Hz(div_16) max Pwm deger 500
+    //setup_timer_2(T2_DIV_BY_1, 249, 1);   //20KHz max PWM deger 500
+
+    setup_timer_2(T2_DIV_BY_16, 199, 1);     //5Khz max PWM deger=200 peryot kadar osilaskop sonucu
+    //setup_timer_2(T2_DIV_BY_4, 124, 1);     //10HzKhz max PWM deger 460
+
+    //set_pwm1_duty(100);
+    //set_pwm2_duty(100);
+    set_tris_d(10111111);
+    
+    delay_ms(100);
+    
+    buzzer_off();
+    bip_rf_var();
+    fan_off();
+   // led1_off(); //kullanýlmamalý
+    led2_off();
+
+    enable_interrupts(INT_RDA);
+    millis_kurulum();
+    
+     
+    //set_tris_a(0b00101111); 
+            
+    
+    //lfr_led_goster(0b01010101);
+   // delay_ms(1000);
+   // fprintf(usbSerial,"Basla...\r\n");
+    
+    dfPlayerNormSes();
+    
+    //mp3_play(30);
+   // delay_ms(1500);
+   // init_graph();
+    memset(ir_sens_ort_deger,0,SENS_SAYISI);
+    
+//    dizi_set(ir_sens_ort_max_deger,0,SENS_SAYISI);
+ //   dizi_set(ir_sens_ort_min_deger,1023,SENS_SAYISI);
+    
+    ir_led_off();
+    //kalibrasyon();
+   
+    
+    k_means_baslangic_esik_olustur();
+    
+    srand(MP3_SD_RASTGELE_MAX_SAYI);// everytime this is called the seed will be initialized and the random sequence will be started 
+   // time_aku_ornek=millis();
+    time_sens_deger_goster=millis();
+                //0 1 2  3 4  5 6 7
+    
+    while(TRUE){
+        
+        //fis_evaluate();
+        
+        if(input(DF_BUSY_PIN)){
+            mp3_rastgele();
+        }
+
+        
+        if(millis()-time_sens_deger_goster>500){
+            
+             //debug_ir_sens(ORT_DEGER, GERILIM_VAR);
+            //debug_ir_sens(HAM_DEGER, GERILIM_VAR);
+//             debug_ir_sens_dizi(ir_sens_ort_deger_e_on);
+//             debug_ir_sens_dizi(ir_sens_ort_deger_e_off);
+            // debug_ir_sens_dizi(ir_sens_ort_deger);
+            // debug_ir_sens_dizi(ir_sens_baslangic_esik_deger);
+           //  debug_ir_sens_dizi(ir_sens_sayisal_deger);
+             
+            // fprintf(usbSerial,"\r\n");
+
+            //  debug_ir_sens(MAX_DEGER, GERILIM_VAR); 
+            //  debug_ir_sens(MIN_DEGER, GERILIM_VAR);
+
+            //max min deðerleri yeni ortam bilgisi için resetle
+            //  dizi_set(ir_sens_ort_max_deger,0,SENS_SAYISI);
+            // dizi_set(ir_sens_ort_min_deger,1023,SENS_SAYISI);
+
+          //  fprintf(usbSerial,"pos=%u \r\n",lfr_led);
+           // fprintf(usbSerial,"posDig=%Lu\thata=%Ld\r\n",ir_sens_pos_digital,hata);
+            
+           // fprintf(usbSerial,"fisPOS:%f", g_fisOutput[0]);
+           // sens_deger_sayisal();
+              time_sens_deger_goster=millis();
+        }
+        
+        if(sens_yeni_deger){
+            //pozisyon bul PID algoritam çalýþtýr 
+            //ir_sens_pos_ort=agirlikliPosGetir(ORTALAMA_DEGER);
+            ir_sens_pos_digital=agirlikliPosGetir(DIGITAL_DEGER);
+            hata=HATA_REF-ir_sens_pos_digital;
+            son_hata=hata;
+            
+           // sens_led_goster();
+            
+            sens_yeni_deger=0;
+            
+        }
+        if(k_means_yeni_veri){
+            
+            k_means_max_min_esik();
+            k_means_sens_sayisal();
+         //   k_means_sayisal_pos_olustur();
+            sens_led_goster();
+        }
+       // v_aku=v_aku_oku_ort();
+       // ir_sens_adc_oku();
+        
+        test_donanim();
+        //delay_ms(10);
+    }//while loop
+
+}//main
+
+////////
+
+
+unsigned int16 agirlikliPosGetir(int8 ortDigital)
+{
+    #define AGIRLIK_KATSAYI 500
+    //çarpma yada bölme iþleminde uygun  deðiþken tipi belirlenmezse  inerrupt larýn deisable edildiðine dair uyarý verir.....
+    unsigned char x;;
+    unsigned int32 topAgirlik=0; 
+    unsigned int16 toplam=0; 
+    unsigned int16 sonDeger=0; 
+   
+    
+    for(x=0; x<SENS_SAYISI; x++) 
+    {
+        if(ortDigital==ORTALAMA_DEGER){
+            topAgirlik+=_mul(_mul(ir_sens_ort_deger[x],x),AGIRLIK_KATSAYI);
+            toplam+= ir_sens_ort_deger[x];
+        }
+        
+        if(ortDigital==DIGITAL_DEGER){
+            if(bit_test(lfr_led,x)){
+                topAgirlik+= 1* (x * AGIRLIK_KATSAYI);
+                toplam++;
+            }
+           
+            //topAgirlik+=_mul(_mul(ir_sens_sayisal_deger[x],x),AGIRLIK_KATSAYI);
+        }
+         //topAgirlik+=(sensorDeger[x])*(x*500);
+        //toplam+= sensorDeger[x];
+        
+    }
+    sonDeger = (unsigned int16)(topAgirlik/toplam);
+    
+    //fprintf(usbSerial,"A:%Lu\tT:%Lu\t pos=%Lu \r\n",topAgirlik,toplam,sonDeger);
+    
+    return sonDeger;
+}
+
+void ir_sens_adc_oku(BOOLEAN e_on)
+{
+   unsigned int16 ir_adc=0;
+   int i=0;
+   
+   for(i=0;i<8;i++)
+   {
+        set_adc_channel(i);
+        delay_us(20);
+        ir_adc= read_adc();
+        ir_sens_adc_ham_deger[i]=ir_adc;
+   }    
+   
+   if(e_on==1){
+       
+        ir_sens_ort_deger_e_on[0]=ir_sens_adc_ham_deger[0];
+        ir_sens_ort_deger_e_on[1]=ir_sens_adc_ham_deger[1];
+        ir_sens_ort_deger_e_on[2]=ir_sens_adc_ham_deger[2];
+        ir_sens_ort_deger_e_on[3]=ir_sens_adc_ham_deger[3];
+        ir_sens_ort_deger_e_on[4]=ir_sens_adc_ham_deger[4];
+        ir_sens_ort_deger_e_on[5]=ir_sens_adc_ham_deger[5];
+        ir_sens_ort_deger_e_on[6]=ir_sens_adc_ham_deger[6];
+        ir_sens_ort_deger_e_on[7]=ir_sens_adc_ham_deger[7];
+   }
+   if(e_on==0){
+        ir_sens_ort_deger_e_off[0]=ir_sens_adc_ham_deger[0];
+        ir_sens_ort_deger_e_off[1]=ir_sens_adc_ham_deger[1];
+        ir_sens_ort_deger_e_off[2]=ir_sens_adc_ham_deger[2];
+        ir_sens_ort_deger_e_off[3]=ir_sens_adc_ham_deger[3];
+        ir_sens_ort_deger_e_off[4]=ir_sens_adc_ham_deger[4];
+        ir_sens_ort_deger_e_off[5]=ir_sens_adc_ham_deger[5];
+        ir_sens_ort_deger_e_off[6]=ir_sens_adc_ham_deger[6];
+        ir_sens_ort_deger_e_off[7]=ir_sens_adc_ham_deger[7];
+   }
+   
+   
+   hareketli_ort_orn_say++;
+   
+}
+void millis_kurulum()
+{
+    
+    setup_timer_0(T0_INTERNAl | T0_8_BIT | T0_DIV_64);    // clock 48Mhz
+    //set_timer0(0x43);            //1000uS    clock 48Mhz
+    //set_timer0(0x82);            //1000uS 32MHZ
+    set_timer0(0x05);            //1000uS 64MHZ
+    // set_timer0(0xC0);            //1000uS 16MHZ
+     
+     
+//    setup_timer_1(T1_INTERNAL|T1_DIV_BY_8);
+//    set_timer1(0xFB1D);   //64285 1000uS div_8 ile kesme   
+//    setup_timer_3(T3_INTERNAL|T3_DIV_BY_8);
+//    set_timer3(0xFB1D);
+//    clear_interrupt(INT_TIMER3);
+//    enable_interrupts(INT_TIMER3); 
+//    disable_interrupts(INT_TIMER3);
+//    enable_interrupts(PERIPH);
+//    enable_interrupts(INT_TIMER1);
+    
+    enable_interrupts(INT_TIMER0);
+    enable_interrupts(GLOBAL);
+     
+}
+
+#INT_TIMER0 //HIGH                    //Timer0 Kesmesi
+void Timer0_int()
+{
+   // set_timer0(0x43);            //1000uS 16Mhz
+   // set_timer0(0x82);            //1000uS 32MHZ
+   set_timer0(0x05);           //1000uS 64MHZ
+  // set_timer0(0xC0);            //1000uS 16MHZ
+   // output_toggle(clock);
+    
+    if(sens_emiter_on_off==0){
+        ir_led_off();                        // Anotlara +5V ver ve 1mS sonra on dðeri oku
+    }
+    if(sens_emiter_on_off==1){
+        ir_sens_adc_oku(EMITTER_OFF);       // off deðeri oku
+    }
+    if(sens_emiter_on_off==2){
+        ir_led_on(); 
+    }
+    if(sens_emiter_on_off==3)
+    {
+       
+        ir_sens_adc_oku(EMITTER_ON);        // on deðeri oku
+        sens_yeni_deger=1;
+        
+        //sens_cizgi_durum_getir();       // sensör çizgi durum güncelle  
+        k_means_veri_havuzu_olustur();
+      
+       // ir_led_off();                       //Anotlar dan +5V kes ve 1mS sonra aff deðeri oku...
+    }
+
+    sens_emiter_on_off++;
+    if(sens_emiter_on_off>3) sens_emiter_on_off=0;
+    
+    timerIntSay++;
+    
+    clear_interrupt(INT_TIMER0 ) ;
+}//
+
+
+#INT_RDA HIGH
+void serialPort1_int(){
+    
+    disable_interrupts(GLOBAL);
+    char c=fgetc(usbSerial);
+    
+    bip_rf_var();
+    rx_pos=1;
+    
+    clear_interrupt(INT_RDA2) ;
+    enable_interrupts(GLOBAL);
+}
+
+
+#INT_RDA2 HIGH
+void serialPort2_int(){
+    
+    disable_interrupts(GLOBAL);
+    char c=fgetc(usbSerial);
+    
+    bip_rf_var();
+    rx_pos=1;
+    
+    clear_interrupt(INT_RDA2) ;
+    enable_interrupts(GLOBAL);
+}
+
+
+
+//void sens_cizgi_durum_getir(){
+//    int x=0;
+//    hepsi_beyaz_say=hepsi_siyah_say=0;
+//    
+//    sens_max_min_bul(TRUE, FALSE);      //Deðiþiklik algýlamak için yeni anlýk esik degeri getiriliyor....
+//
+//    for(x=0;x<SENS_SAYISI;x++)   //Iþýk durum tespiti ve ortalama deger hesaplama   
+//    {
+//        if(ir_sens_ort_deger_e_on[x]==ir_sens_ort_deger_e_off[x] //sensor on ve off ölçümleri eþitse
+//           ||                                                    //veya
+//           ir_sens_ort_deger_e_on[x]<ir_sens_ort_deger_e_off[x]) // off ölçümü on ölçümünden büyükse
+//        {
+//            ir_sens_ort_deger[x]=0;                              // sensor AÞIRI ýþýk altýnda
+//            ir_sens_isik_durumu[x]=ASIRI_ISIK;
+//            son_isik_durumu=ASIRI_ISIK;
+//
+//            ir_sens_asiri_isik_deger[x]=ir_sens_ort_deger_e_on[x];  //Siyahta olma aþýrý ýþýk koþulu için kullaným
+//        }
+//        
+//        if(ir_sens_esik_deger[x]>ir_sens_baslangic_esik_deger[x]+100)  //Eþik deger deðiþti ise IÞIK durum deðiþikliði oldu.
+//        {
+//            if(son_isik_durumu==ASIRI_ISIK)                            // ASIRI_ISIK--> NORMAL_ISIK geçiþi
+//            {
+//                 ir_sens_baslangic_esik_deger[x]=ir_sens_esik_deger[x]; // ilk degeri güncelle
+//                 son_isik_durumu=NORMAL_ISIK;
+//            }
+//        }
+//        
+//        if(ir_sens_ort_deger_e_on[x]>ir_sens_ort_deger_e_off[x]+100) //100=~500mV
+//        {
+//            ir_sens_ort_deger[x]=ir_sens_ort_deger_e_on[x]-ir_sens_ort_deger_e_off[x];
+//            ir_sens_isik_durumu[x]=NORMAL_ISIK;
+//           
+//        }
+//        
+//        //*                         *//
+//
+//        if(ir_sens_isik_durumu[x]==ASIRI_ISIK) ////Von==Voff
+//        {
+//            ir_sens_sayisal_deger[x]=BEYAZ;
+//            hepsi_beyaz_say++;
+//        }
+//
+//        if(ir_sens_isik_durumu[x]==NORMAL_ISIK)
+//        {
+//            if(ir_sens_ort_deger[x]> ir_sens_baslangic_esik_deger[x] ) {
+//                ir_sens_sayisal_deger[x]=BEYAZ;
+//                 hepsi_beyaz_say++;
+//            }
+//            
+//            if(ir_sens_ort_deger[x]< ir_sens_baslangic_esik_deger[x]) //Normal ýþýk SIYAH tespiti
+//            {
+//                ir_sens_sayisal_deger[x]=SIYAH;
+//                hepsi_siyah_say++;
+//            }
+//        }
+//
+//        if(ir_sens_ort_deger_e_on[x]>ir_sens_ort_deger_e_off[x] &&  //Aþýrý ýþýk altýnda siyah tespiti
+//          (ir_sens_esik_deger[x]<350)) //350:1.7V  //deneysel çalýþmaya göre bulundu dolayýsý ile baðýmlý bir durum
+//                                                   // adaptif olamaz.
+//        {
+//            if((ir_sens_ort_deger_e_on[x]<ir_sens_asiri_isik_deger[x])&& ir_sens_ort_deger[x]>0){
+//                ir_sens_sayisal_deger[x]=SIYAH;     
+//                hepsi_siyah_say++;
+//            }
+//        }
+//
+//        //Sayýsal durum incelemesi...
+//        if(!ir_sens_sayisal_deger[3] && !ir_sens_sayisal_deger[4]){
+//            if(ir_sens_sayisal_deger[0] || ir_sens_sayisal_deger[1] || ir_sens_sayisal_deger[2]){
+//                ir_sens_sayisal_deger[5]=ir_sens_sayisal_deger[6]=ir_sens_sayisal_deger[7]=BEYAZ;
+//            }
+//            if(ir_sens_sayisal_deger[5] || ir_sens_sayisal_deger[6] || ir_sens_sayisal_deger[7]){
+//                ir_sens_sayisal_deger[0]=ir_sens_sayisal_deger[1]=ir_sens_sayisal_deger[2]=BEYAZ;
+//            }
+//        }
+//        if(ir_sens_sayisal_deger[3] && ir_sens_sayisal_deger[4]){
+//            ir_sens_sayisal_deger[0]=ir_sens_sayisal_deger[1]=ir_sens_sayisal_deger[2]=BEYAZ;
+//            ir_sens_sayisal_deger[5]=ir_sens_sayisal_deger[6]=ir_sens_sayisal_deger[7]=BEYAZ;
+//        }
+//        
+//        if(hepsi_beyaz_say>=SENS_SAYISI)
+//            sens_hepsi_beyaz=1;
+//        else sens_hepsi_beyaz=0;
+//        
+//        if(hepsi_siyah_say>=SENS_SAYISI)
+//            sens_hepsi_siyah=1;
+//        else sens_hepsi_siyah=0;
+//        
+//    }//for
+//}
+
+//void sens_max_min_bul(BOOLEAN anlik, BOOLEAN baslangic)
+//{
+//    int sens_say=0;
+//    unsigned int16 min=1023,max=0;
+//    unsigned int16 _max_deger=0;
+//    unsigned int16 _min_deger=1023;
+//    
+//    for (sens_say=0; sens_say < SENS_SAYISI; sens_say++) 
+//    {
+//        if(anlik) //ölçüm anýnda sensörlerin durumuna göre tek bir max-min belirle
+//                  // hepsi beyaz yada siyah durumunda max=min olur. Son eþik deðerinden küçük ise hepsi siyahta
+//                  //büyükse hepsi beyazdadýr.  Bu durumda eþik deðeri yeniden hesaplanmaz.
+//        {
+//            if(ir_sens_ort_deger[sens_say]>_max_deger)
+//                _max_deger=ir_sens_ort_deger[sens_say];
+//            if(ir_sens_ort_deger[sens_say]<_min_deger)
+//                _min_deger=ir_sens_ort_deger[sens_say];
+//            
+//        }else //ayrý ayrý her bir sensör için belirlenir.
+//             // ölçüm anýnda çalýþtýrýlýr ve sensör ayný yerde ise max=min olur.
+//             // baþlangýç kalibrasyonu için bir defa çalýþtýrýlýr. Sensörlerin yer deðiþtirilmesi saðlanmalýdýr.
+//        {
+//            if(ir_sens_ort_deger[sens_say]>ir_sens_ort_max_deger[sens_say])
+//            ir_sens_ort_max_deger[sens_say]=ir_sens_ort_deger[sens_say];
+//        
+//            if(ir_sens_ort_deger[sens_say]<ir_sens_ort_min_deger[sens_say])
+//            ir_sens_ort_min_deger[sens_say]=ir_sens_ort_deger[sens_say];
+//        }
+//    }
+//    
+//    for (sens_say=0; sens_say < SENS_SAYISI; sens_say++) 
+//    {
+//        if(anlik){
+//            max= _max_deger;;
+//            min= _min_deger;
+//        }else{
+//            max= ir_sens_ort_max_deger[sens_say];
+//            min= ir_sens_ort_min_deger[sens_say];
+//        }
+//        
+//        if(baslangic)
+//             ir_sens_baslangic_esik_deger[sens_say]=(unsigned int16) (max-((max-min)/2));
+//        else
+//            ir_sens_esik_deger[sens_say]=(unsigned int16) (max-((max-min)/2));  //(max+min)/2  ile ayný
+//    }
+//   
+//}
+
+void sens_led_goster(){
+    
+    int i;
+    if(sens_hepsi_beyaz){
+        lfr_led=0x00;
+        lfr_led_goster(lfr_led);
+    }else if(sens_hepsi_siyah){
+        lfr_led=0xFF;
+        lfr_led_goster(lfr_led);
+    }else{
+        for (i = 0; i < SENS_SAYISI; i++) {
+        
+            if( ir_sens_sayisal_deger[i]==1){
+                bit_set(lfr_led,i);
+                lfr_led_goster(lfr_led);
+            }
+            if( ir_sens_sayisal_deger[i]==0){
+                 bit_clear(lfr_led,i);
+                lfr_led_goster(lfr_led);
+            }
+        }
+    } 
+   // lfr_led=0x00;
+}//
+
+//void sens_deger_sayisal(){
+//    int i;
+//    int hepsi_beyaz=0; //siyah=1, beyaz=0
+//    int hepsi_siyah=0; //siyah=1, beyaz=0
+//    
+//    for (i = 0; i < SENS_SAYISI; i++) {
+//        
+//        if(ir_sens_ort_deger[i]>450)    //2,2V üstünde ise beyazda 
+//            hepsi_beyaz++;
+//     
+//        if(ir_sens_ort_deger[i]<400)    //2,2V üstünde ise beyazda 
+//            hepsi_siyah++;
+//        
+//        if(ir_sens_ort_deger[i]<ir_sens_esik_deger[i])
+//            ir_sens_sayisal_deger[i]=1;     //siyahta
+//        else ir_sens_sayisal_deger[i]=0;    //beyazda
+//
+//    }
+//    
+//    if(hepsi_beyaz<8 && hepsi_siyah<8){
+//        for (i = 0; i < SENS_SAYISI; i++) {
+//            if( ir_sens_sayisal_deger[i]==1){
+//                bit_set(lfr_led,i);
+//                lfr_led_goster(lfr_led);
+//            }
+//            if( ir_sens_sayisal_deger[i]==0){
+//                 bit_clear(lfr_led,i);
+//                lfr_led_goster(lfr_led);
+//            }
+//        }
+//    }else{
+//        if(hepsi_beyaz>=8){
+//            lfr_led=0;
+//            lfr_led_goster(lfr_led);
+//        }
+//         if(hepsi_siyah>=8){
+//            lfr_led=0xff;
+//            lfr_led_goster(lfr_led);
+//        }
+//    }
+//
+//}
+
+void kalibrasyon(){
+//    bip_rf_var();
+//    unsigned int32 time_kal_yap=0;
+//    
+//    while(1){
+//        
+//        if(sens_yeni_deger){
+//            //pozisyon bul PID algoritam çalýþtýr 
+//            sens_max_min_bul(TRUE,TRUE);  //max-min ve esik deger bul
+//            
+//            sens_yeni_deger=0;
+//        }
+//        if(millis()-time_kal_yap>5000){
+//            break;
+//        }
+//        
+//    }
+//    bip_yazildi();
+    
+}
+
+unsigned int16 hareketli_ortalama(int ornek_say, unsigned int16 an_deger, unsigned int16 *moving_dizi)
+{
+//    int x=0;
+//    unsigned int16 ort=0,toplam=0;;
+//    int payda=0;
+//    
+//    if(ornek_sayisi<ORNEK_SAYISI)
+//    {
+//        moving_dizi[ornek_say]=an_deger;// filtre ilk degerlerde pasif
+//        ort=an_deger;
+//    }else{      // filtre aktif.
+//        
+//        for(x=0;x<ORNEK_SAYISI;x++){
+//            
+//            if(moving_dizi[x]!=0) payda++;  // sýfýr sayýsýna göre payda deðerini belrile
+//            toplam+=moving_dizi[x]; 
+//        }
+//        if(payda==0) return an_deger;
+//        
+//        ort=toplam/payda;
+//        
+//        for(x=1;x<ORNEK_SAYISI-1;x++)    // en eski deðeri çýkar ortalamaya yeni deðeri ekle.
+//            moving_dizi[x-1]=moving_dizi[x];
+//        
+//        moving_dizi[ORNEK_SAYISI-1]=an_deger;
+//    }
+//    return ort;
+}
+
+//float v_aku_oku_ort(){
+    
+//    //#define TIME_AKU_ORNEK 1500
+//    unsigned int16 an_adc_ort=0, an_adc=0;
+//    float v_aku_ort=0.0;
+//    
+//    if(millis()-time_aku_ornek>10){
+//        
+//        set_adc_channel(AN_CHANNEL_AKU); //0,1,2,....16..
+//        delay_us(25);//10uS kadar olabilir.
+//        an_adc = read_adc(); 
+//        
+//        an_adc_ort=hareketli_ortalama(hareketli_ort_orn_say++, an_adc, aku_hareketli_ortalama_dizi);
+//        
+//        v_aku_ort=an_adc_ort*(5.0/1024.0)*6.0;      // Vadc=Vaku*(R1/(R1+R2)--> Vaku=Vadc*((R1+R2)/R1)), (R1+R2)/R1=(10+50)Kohm/10Kohm=6
+//        
+//        if(hareketli_ort_orn_say>=ORNEK_SAYISI)hareketli_ort_orn_say=ORNEK_SAYISI+1;
+//
+//        time_aku_ornek=millis();
+//        //fprintf(usbSerial,"an_adc=%lu \r\n",an_adc);
+//        //fprintf(usbSerial,"Vaku(24V)=%f V\r\n",v_aku_ort);
+//        fprintf(usbSerial,"%f\r\n",v_aku_ort);
+//        //int32 deger=(int32)((v_aku_ort-(int32)v_aku_ort)*100);
+//        //graph_point(deger);
+//
+//        return (float)v_aku_ort;
+ //   }
+//}
+
+//float v_aku_oku()
+//{
+//    unsigned int16 adc=0;
+//    float v_aku_deger=0.0;
+//    
+//    set_adc_channel(AN_CHANNEL_AKU); //0,1,2,....16..
+//    delay_us(50);
+//    adc = read_adc();
+//    
+//    v_aku_deger=adc*(5.0/1024.0)*6.0; 
+//     
+//    fprintf(usbSerial,"Vaku(24V)=%f V\r\n",v_aku_deger);
+//    return v_aku;
+//}
+
+//void debug_ir_sens_dizi(unsigned int16 *ir_dizi){
+//    int i=0;
+//    fprintf(usbSerial,"\r\n");
+//    for (i = 0; i < SENS_SAYISI; i++)
+//    {
+//        fprintf(usbSerial,"%Lu:%f\t",ir_dizi[i],ir_dizi[i]*(5.0/1024.0));
+//    }
+//    //fprintf(usbSerial,"\r\n");
+//     
+//}
+
+//void debug_ir_sens(int deger_tip,BOOLEAN volt)
+//{
+//    int i=0;
+////    for (i = 0; i < SENS_SAYISI; i++)
+////    {
+////        fprintf(usbSerial,"S%u\t",i);
+////    }
+////    fprintf(usbSerial,"\r\n");
+//    switch(deger_tip){
+//        case HAM_DEGER:
+//            fprintf(usbSerial,"\r\n");
+//            if(volt){
+//                for (i = 0; i < SENS_SAYISI; i++)
+//                {
+//                    fprintf(usbSerial,"%Lu:%f\t",ir_sens_adc_ham_deger[i],ir_sens_adc_ham_deger[i]*(5.0/1024.0));
+//                }
+//                fprintf(usbSerial,"\r\n");
+//            }else{
+//                for (i = 0; i < SENS_SAYISI; i++)
+//                {
+//                    fprintf(usbSerial,"%Lu\t",ir_sens_adc_ham_deger[i]);
+//                }
+//                fprintf(usbSerial,"\r\n");
+//            }
+//            break;
+//            
+//        case ORT_DEGER:
+//            fprintf(usbSerial,"\r\n");
+//            if(volt){
+//                for (i = 0; i <SENS_SAYISI; i++)
+//                {
+//                    fprintf(usbSerial,"%Lu:%f\t",ir_sens_ort_deger[i],ir_sens_ort_deger[i]*(5.0/1024.0));
+//                }
+//                fprintf(usbSerial,"\r\n");
+//            }else{
+//                for (i = 0; i < SENS_SAYISI; i++)
+//                {
+//                    fprintf(usbSerial,"%Lu\t",ir_sens_ort_deger[i]);
+//                }
+//                
+//                fprintf(usbSerial,"\r\n");
+//            }
+//            
+//            break;
+//        case MAX_DEGER:
+//            fprintf(usbSerial,"\r\n");
+//            
+//            if(volt){
+//                for (i = 0; i < SENS_SAYISI; i++)
+//                {
+//                    fprintf(usbSerial,"%Lu:%f\t",ir_sens_ort_max_deger[i],ir_sens_ort_max_deger[i]*(5.0/1024.0));
+//                }
+//                fprintf(usbSerial,"\r\n");
+//            }else{
+//                for (i = 0; i < SENS_SAYISI; i++)
+//                {
+//                    fprintf(usbSerial,"%Lu\t",ir_sens_ort_max_deger[i]);
+//                }
+//                fprintf(usbSerial,"\r\n");
+//            }
+//            break;
+//        case MIN_DEGER:
+//            fprintf(usbSerial,"\r\n");
+//            
+//            if(volt){
+//                for (i = 0; i < SENS_SAYISI; i++)
+//                {
+//                    fprintf(usbSerial,"%Lu:%f\t",ir_sens_ort_min_deger[i],ir_sens_ort_min_deger[i]*(5.0/1024.0));
+//                }
+//                fprintf(usbSerial,"\r\n");
+//            }else{
+//                for (i = 0; i < SENS_SAYISI; i++)
+//                {
+//                    fprintf(usbSerial,"%Lu\t",ir_sens_ort_min_deger[i]);
+//                }
+//                fprintf(usbSerial,"\r\n");
+//            }
+//            break;
+//    }
+//}
+
+void test_donanim()
+{
+    if(millis()-time_led>250){
+            
+        if(led_say>=7) {
+
+           led_say=0;
+           lfr_led=0;
+
+           //bip_rf_var();
+           output_toggle(FAN_PIN); 
+          // output_toggle(IR_LED_ANOT_PIN);
+
+            //fprintf(usbSerial,"Vaku(24V)=%f V\r\n",v_aku);
+            //v_aku_oku();
+
+           //debug_ir_sens(ORT_DEGER, GERILIM_VAR);
+        }
+
+
+        if(led_say==2){
+           output_toggle(LED2_PIN);
+        }
+
+        if(led_say==6){
+           //output_toggle(LED1_PIN);
+        }
+
+        led_say++;
+       // bit_set(lfr_led,led_say);
+        //lfr_led_goster(lfr_led);
+
+        time_led=millis();
+    }
+}
+
+void bipp(unsigned int16 sure,int sayi,long pin)                              
+{
+   int a=0;
+   for(a=0;a<sayi;a++)
+   {
+     output_high(pin);delay_ms(sure/2);output_low(pin);delay_ms(sure/2); 
+   }                                      
+}//
+
+void delay_m_us(unsigned int16 n) {
+    
+    for (;n!=0; n--)
+        delay_us(1000);
+}
+
+//void dizi_set(unsigned int16 *dizi,unsigned int16 deger, int16 uzunluk)
+//{
+//    int16 i=0;
+//    for(i=0;i<uzunluk;i++)
+//        dizi[i]=deger;
+//}
+
+
+

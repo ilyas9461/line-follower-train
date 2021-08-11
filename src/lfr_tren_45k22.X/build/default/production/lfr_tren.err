@@ -1,0 +1,12 @@
+Compiling D:\EasyPICV6\CCS_PIC_C\Proje_tren_cizgi_izleyen\kiCad\source\lfr_tren_45k22.X\lfr_tren on 22-Oca-20 at 14:37
+D:\EasyPICV6\CCS_PIC_C\Proje_tren_cizgi_izleyen\kiCad\source\lfr_tren_45k22.X\k_means_fonk.c:82:1:  Warning#203  Condition always TRUE
+D:\EasyPICV6\CCS_PIC_C\Proje_tren_cizgi_izleyen\kiCad\source\lfr_tren_45k22.X\rf_islemler.c:99:1:  Warning#203  Condition always TRUE
+D:\EasyPICV6\CCS_PIC_C\Proje_tren_cizgi_izleyen\kiCad\source\lfr_tren_45k22.X\rf_islemler.c:147:1:  Warning#203  Condition always TRUE
+D:\EasyPICV6\CCS_PIC_C\Proje_tren_cizgi_izleyen\kiCad\source\lfr_tren_45k22.X\rf_islemler.c:188:1:  Warning#203  Condition always TRUE
+D:\EasyPICV6\CCS_PIC_C\Proje_tren_cizgi_izleyen\kiCad\source\lfr_tren_45k22.X\rf_islemler.c:308:1:  Warning#203  Condition always TRUE
+D:\EasyPICV6\CCS_PIC_C\Proje_tren_cizgi_izleyen\kiCad\source\lfr_tren_45k22.X\lfr_tren.c:108:1:  Warning#208  Function not void and does not return a value  v_aku_oku
+D:\EasyPICV6\CCS_PIC_C\Proje_tren_cizgi_izleyen\kiCad\source\lfr_tren_45k22.X\lfr_tren.c:91:5:  Warning#202  Variable never used:   time_saniye_say
+D:\EasyPICV6\CCS_PIC_C\Proje_tren_cizgi_izleyen\kiCad\source\lfr_tren_45k22.X\lfr_tren.c:92:6:  Warning#202  Variable never used:   time_saniye
+      Memory usage:   ROM=47%      RAM=49% - 52%
+      0 Errors,  8 Warnings.
+Build Successful.
