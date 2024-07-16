@@ -39,7 +39,7 @@ The vehicle is powered by two 12V batteries. The operating voltage is 24 V. It m
 - PIC18F45K22 MCU.
 - CCS PIC C Compiler
 - PID motor controller.
-- Filter od sensors data.
+- Filter of sensors data.
 - KiCAD PCB design.
 - MP3 player
 
