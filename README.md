@@ -47,7 +47,7 @@ The vehicle is powered by two 12V batteries. The operating voltage is 24 V. It m
 
 ## Sample working video :
 
-<a href="https://www.youtube.com/watch?v=KFKP7lpa3pI" target="_blank">
+<a href="https://www.youtube.com/watch?v=0rQU3r0k7vE" target="_blank">
      <img src="./img/youtube.png" alt="youtube" width="55">
 </a>
 
